@@ -2,17 +2,20 @@
  pragma solidity ^0.8.1;
  import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
  import "@openzeppelin/contracts/access/AccessControl.sol";
+ import "@openzeppelin/contracts/token/common/ERC2981.sol";
 
- contract NFT721 is ERC721,AccessControl{
+ contract NFT721 is ERC721,AccessControl,ERC2981{
      using Strings for uint256;
 
      string private _uri;
+     uint private mintingStartId=1000000;
+     uint private mintingEndId=1000100; 
 
-     bytes32 public constant minterRole=keccak256("MINTER_ROLE");
+     
 
 
      constructor()ERC721("NFT721 CONTRACT","NFT721"){
-         _uri="www.me.com";
+         _uri="www.me.com/";
 
          _setupRole(DEFAULT_ADMIN_ROLE,msg.sender);
      }
@@ -22,7 +25,7 @@
     * then  we have to override supportInterface function and add the interfaces name into the override tupple.like function function down
     */
 
-     function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721, AccessControl) returns (bool) {
+     function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721, AccessControl,ERC2981) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 
@@ -35,12 +38,29 @@
      }
 
       function setBaseUri(string memory _newUri) external{
+          require(hasRole(DEFAULT_ADMIN_ROLE,msg.sender),"NFT721:Caller is not Default admin");
          _uri=_newUri;
      }
 
+        function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
+        require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
+
+        string memory baseURI = _baseURI();
+        return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, tokenId.toString(),".json")) : "";
+    }
+
+    function mintNFT(address _to,uint _amount) external {
+        require(mintingEndId>=(mintingStartId+_amount),"NFT721:amount exceed minting limit");
+        for (uint i=0; i<_amount;i++){
+             mintingStartId +=1;
+            _safeMint(_to,mintingStartId);
+        }
+
+    }
 
 
-  
+
+
 
 
  }

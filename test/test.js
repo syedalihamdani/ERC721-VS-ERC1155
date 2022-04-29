@@ -21,7 +21,7 @@ describe("NFT721 VS NFT1155", function () {
 
   })
 
-
+// ***************************************************NFT721 UNIT TESTS START********************************************************
   it("NFT721:getBaseURI", async function () {
     let getBaseUri=await this.deploedNFT721.getBaseUri();
     expect(getBaseUri).to.equal("www.me.com");
@@ -36,17 +36,8 @@ describe("NFT721 VS NFT1155", function () {
   it("AccessControl:getRoleAdmin", async function () {
     let Default_admin_role=await this.deploedNFT721.DEFAULT_ADMIN_ROLE();
     let getRoleAdmin=await this.deploedNFT721.getRoleAdmin(Default_admin_role);
-    // console.log(getRoleAdmin);
     expect(Default_admin_role).to.equal(getRoleAdmin);
   });
-
-  it("AccessControl:grantRole case_1,Only Default_admin can call grantRole function", async function () {
-    let minterRole=await this.deploedNFT721.minterRole();
-    await this.deploedNFT721.grantRole(minterRole,this.account2.address)
-    let hasRole=await this.deploedNFT721.hasRole(minterRole,this.account2.address);
-    expect(hasRole).to.equal(true);
-  });
-  
 
   it("NFT721:setBaseURI", async function () {
     await this.deploedNFT721.setBaseUri("www.new.com")
@@ -54,11 +45,32 @@ describe("NFT721 VS NFT1155", function () {
     expect(getBaseUri).to.equal("www.new.com");
   });
 
+  it("NFT721:setBaseURI 1st_revert condition", async function () {
+    await expect(this.NFT721fromAccount2.setBaseUri("www.hello.com")).to.be.revertedWith("NFT721:Caller is not Default admin");
+  });
+
+  it("NFT721:mintNFT & tokenURI", async function () {
+    await this.deploedNFT721.mintNFT(this.account2.address,100);
+    let tokenURI=await this.deploedNFT721.tokenURI(1000100);
+    expect(tokenURI).to.equal("www.me.com/1000100.json");
+  });
+
+  it("NFT721:mintNFT 1st_revert condition", async function () {
+    await expect(this.deploedNFT721.mintNFT(this.account2.address,101)).to.be.revertedWith("NFT721:amount exceed minting limit");
+  });
+
+  // ***************************************************NFT721 UNIT TESTS COMPLETED********************************************************
+
   
+
+
 
   // it("Should return the greeting", async function () {
   //   await expect(this.deploedGreeter.setGreeting("no")).to.be.revertedWith("Greeter: 10 minutes has not been passed")
   // });
+
+
+
 
   // it("Should return the greeting", async function () {
   //   await network.provider.send("evm_increaseTime", [600]);
@@ -66,4 +78,9 @@ describe("NFT721 VS NFT1155", function () {
   //   let greet=await this.deploedGreeter.greet();
   //   expect(greet).to.equal("no");
   // });
+
+
+
+
+
 });
