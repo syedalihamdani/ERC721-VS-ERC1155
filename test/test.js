@@ -19,12 +19,24 @@ describe("NFT721 VS NFT1155", function () {
     
     this.NFT721fromAccount3=this.deploedNFT721.connect(this.account3);
 
+    
+      // *************************************************NFT1155*************************************************************************
+      const NFT1155 = await ethers.getContractFactory("NFT1155");
+    this.deploedNFT1155 = await NFT1155.deploy();
+    await this.deploedNFT1155.deployed();
+
+    this.NFT1155fromAccount1=this.deploedNFT1155.connect(this.account1);
+    
+    this.NFT1155fromAccount2=this.deploedNFT1155.connect(this.account2);
+    
+    this.NFT1155fromAccount3=this.deploedNFT1155.connect(this.account3);
+
   })
 
 // ***************************************************NFT721 UNIT TESTS START********************************************************
   it("NFT721:getBaseURI", async function () {
     let getBaseUri=await this.deploedNFT721.getBaseUri();
-    expect(getBaseUri).to.equal("www.me.com");
+    expect(getBaseUri).to.equal("https://fvyrwrmtiskm.usemoralis.com/");
   });
 
   it("AccessControl:hasRole", async function () {
@@ -50,18 +62,54 @@ describe("NFT721 VS NFT1155", function () {
   });
 
   it("NFT721:mintNFT & tokenURI", async function () {
-    await this.deploedNFT721.mintNFT(this.account2.address,100);
-    let tokenURI=await this.deploedNFT721.tokenURI(1000100);
-    expect(tokenURI).to.equal("www.me.com/1000100.json");
+    await this.deploedNFT721.mintNFT(this.account2.address,10);
+    let tokenURI=await this.deploedNFT721.tokenURI(1000010);
+    expect(tokenURI).to.equal("https://fvyrwrmtiskm.usemoralis.com/1000010.json");
   });
 
   it("NFT721:mintNFT 1st_revert condition", async function () {
     await expect(this.deploedNFT721.mintNFT(this.account2.address,101)).to.be.revertedWith("NFT721:amount exceed minting limit");
   });
+  it("NFT721:mintNFT 2nd_revert condition", async function () {
+    await expect(this.NFT721fromAccount3.mintNFT(this.account2.address,1)).to.be.revertedWith("NFT721:Only admin has right to mint the token");
+  });
 
   // ***************************************************NFT721 UNIT TESTS COMPLETED********************************************************
 
   
+
+
+
+// ***************************************************NFT1155 UNIT TESTS START********************************************************
+it("NFT1155:setURI", async function () {
+  await this.deploedNFT1155.setUri("www.new.com/")
+  let uri=await this.deploedNFT1155.uri(1);
+  expect(uri).to.equal("www.new.com/1.json");
+});
+
+
+it("NFT1155:URI", async function () {
+  let uri=await this.deploedNFT1155.uri(1);
+  expect(uri).to.equal("https://fvyrwrmtiskm.usemoralis.com/1.json");
+});
+
+
+it("NFT1155mintNFT", async function () {
+  await this.deploedNFT1155.mint(this.account2.address,1,2);
+  let balanceOf=await this.deploedNFT1155.balanceOf(this.account2.address,1);
+  expect(balanceOf).to.equal(2);
+});
+
+it("NFT1155:mint 1st_revert condition", async function () {
+  await expect(this.deploedNFT1155.mint(this.account2.address,11,5)).to.be.revertedWith("NFT1155:id exceed minting limit");
+});
+it("NFT1155:mintNFT 2nd_revert condition", async function () {
+  await expect(this.NFT1155fromAccount3.mint(this.account2.address,1,6)).to.be.revertedWith("NFT1155:Only admin has right to mint the token");
+});
+
+
+
+
 
 
 

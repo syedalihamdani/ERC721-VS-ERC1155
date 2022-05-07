@@ -19,7 +19,15 @@ async function main() {
 
   await nft721.deployed();
 
-  console.log("Greeter deployed to:", nft721.address);
+  console.log("NFT721 deployed to:", nft721.address);
+
+
+  const NFT1155 = await hre.ethers.getContractFactory("NFT1155");
+  const nft1155 = await NFT1155.deploy();
+
+  await nft1155.deployed();
+
+  console.log("NFT1155 deployed to:", nft1155.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

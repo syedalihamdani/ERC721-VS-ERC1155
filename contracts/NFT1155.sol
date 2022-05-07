@@ -7,11 +7,17 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 
 contract NFT1155 is ERC1155,AccessControl{
 
-constructor() ERC1155("www.dummy.com/"){
+    string public constant name = "NFT1155 Token";
+    string public constant symbol = "NFT1155";
+
+    uint private mintingStartId=1000000;
+
+constructor() ERC1155("https://fvyrwrmtiskm.usemoralis.com/"){
     _setupRole(DEFAULT_ADMIN_ROLE,msg.sender);
 }
 
 function setUri(string memory _uri) external {
+    require(hasRole(DEFAULT_ADMIN_ROLE,msg.sender),"NFT1155:Only admin has right to mint the token");
     _setURI(_uri);
 }
 
@@ -20,6 +26,8 @@ function setUri(string memory _uri) external {
     }
 
     function mint(address _to,uint _id,uint _amount)external {
+        require(1000010>=(mintingStartId+_id),"NFT1155:id exceed minting limit");
+        require(hasRole(DEFAULT_ADMIN_ROLE,msg.sender),"NFT1155:Only admin has right to mint the token");
         _mint(_to,_id,_amount,"");
     }
 

@@ -2,20 +2,18 @@
  pragma solidity ^0.8.1;
  import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
  import "@openzeppelin/contracts/access/AccessControl.sol";
- import "@openzeppelin/contracts/token/common/ERC2981.sol";
 
- contract NFT721 is ERC721,AccessControl,ERC2981{
+ contract NFT721 is ERC721,AccessControl{
      using Strings for uint256;
 
      string private _uri;
      uint private mintingStartId=1000000;
-     uint private mintingEndId=1000100; 
 
      
 
 
      constructor()ERC721("NFT721 CONTRACT","NFT721"){
-         _uri="www.me.com/";
+         _uri="https://fvyrwrmtiskm.usemoralis.com/";
 
          _setupRole(DEFAULT_ADMIN_ROLE,msg.sender);
      }
@@ -25,7 +23,7 @@
     * then  we have to override supportInterface function and add the interfaces name into the override tupple.like function function down
     */
 
-     function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721, AccessControl,ERC2981) returns (bool) {
+     function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721, AccessControl) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 
@@ -50,7 +48,8 @@
     }
 
     function mintNFT(address _to,uint _amount) external {
-        require(mintingEndId>=(mintingStartId+_amount),"NFT721:amount exceed minting limit");
+        require(1000010>=(mintingStartId+_amount),"NFT721:amount exceed minting limit");
+        require(hasRole(DEFAULT_ADMIN_ROLE,msg.sender),"NFT721:Only admin has right to mint the token");
         for (uint i=0; i<_amount;i++){
              mintingStartId +=1;
             _safeMint(_to,mintingStartId);
