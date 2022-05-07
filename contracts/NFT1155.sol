@@ -28,7 +28,11 @@ function setUri(string memory _uri) external {
     function mint(address _to,uint _id,uint _amount)external {
         require(1000010>=(mintingStartId+_id),"NFT1155:id exceed minting limit");
         require(hasRole(DEFAULT_ADMIN_ROLE,msg.sender),"NFT1155:Only admin has right to mint the token");
-        _mint(_to,_id,_amount,"");
+        
+         for (uint i=0; i<_amount;i++){
+             mintingStartId +=1;
+            _mint(_to,mintingStartId,_amount,"");
+        }
     }
 
     function uri(uint256 tokenId) public view virtual override returns (string memory) {

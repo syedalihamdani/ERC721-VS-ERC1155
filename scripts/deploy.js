@@ -14,12 +14,12 @@ async function main() {
   // await hre.run('compile');
 
   // We get the contract to deploy
-  const NFT721 = await hre.ethers.getContractFactory("NFT721");
-  const nft721 = await NFT721.deploy();
+  // const NFT721 = await hre.ethers.getContractFactory("NFT721");
+  // const nft721 = await NFT721.deploy();
 
-  await nft721.deployed();
+  // await nft721.deployed();
 
-  console.log("NFT721 deployed to:", nft721.address);
+  // console.log("NFT721 deployed to:", nft721.address);
 
 
   const NFT1155 = await hre.ethers.getContractFactory("NFT1155");
